@@ -1,12 +1,16 @@
-﻿namespace ConsoleApp6
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static ConsoleApp7.Program;
+
+namespace ConsoleApp7
 {
     internal class Program
     {
+        // structs //
         public struct Pokemon
         {
 
             // Propiedades
-           
+
             public string nombre { get; set; }
             public int nivel { get; set; }
 
@@ -32,16 +36,30 @@
                 this.nombre = nombre;
                 this.nivel = nivel;
                 this.ps = ps;
-                this. ataque = ataque;
+                this.ataque = ataque;
                 this.defensa = defensa;
                 this.ae = ae;
                 this.de = de;
                 this.velocidad = velocidad;
                 this.estado = estado;
             }
+
+            public void mostrar_cambio_alteracion(string alterado_antiguo) {
+                if (alterado_antiguo == "Normal")
+                {
+                    Console.WriteLine(nombre + " " + ps + " ahora esta " + estado);
+                }else if(alterado_antiguo != estado){
+                    Console.WriteLine(nombre + " " + ps + " paso de estar " +  alterado_antiguo + " a " + estado);
+                }
+                else {
+                    Console.WriteLine(nombre + " " + ps + " no cambio de estado");
+                }
+            }
+
         }
 
-        public struct Entrenador {
+        public struct Entrenador
+        {
 
             // propiedades
 
@@ -52,7 +70,8 @@
 
             //constructor
 
-            public Entrenador(string nombre, int pokedolares, string[] medallas, Pokemon[] equipo) { 
+            public Entrenador(string nombre, int pokedolares, string[] medallas, Pokemon[] equipo)
+            {
                 this.nombre = nombre;
                 this.pokedolares = pokedolares;
                 this.medallas = medallas;
@@ -62,79 +81,148 @@
             //funciones
 
             //funcion dame nivel recorre la lista de pokemons y suma todos sus niveles
-            public int damenivel() {
+            public int damenivel()
+            {
                 int retorno = 0;
-                for (int i = 0; i <= 5; i++) {
+                for (int i = 0; i <= 5; i++)
+                {
                     retorno = retorno + equipo[i].nivel;
                 }
                 return retorno;
             }
         }
 
-        
+        //--------------------------------------------------------------------------------------------------//
 
-
-           
-            
-            
-            
-            
-            
-            
-            
-            static void Main(string[] args)
+        // funciones //
+        public static void comparar_nivel(Entrenador entrenador1, Entrenador entrenador2){
+            // comparacion
+            if (entrenador1.damenivel() > entrenador2.damenivel())
             {
+                Console.WriteLine(entrenador1.nombre + " Tiene mas nivel que: " + entrenador2.nombre);
+            }
+            else if (entrenador2.damenivel() > entrenador1.damenivel())
+            {
+                Console.WriteLine(entrenador2.nombre + " Tiene mas nivel que: " + entrenador1.nombre);
+            }
+            else
+            {
+                Console.WriteLine("Tienen el mismo nivel");
+            }
+        }
+
+        public static void aplicar_efecto_alterado(Entrenador ash, Entrenador pepe) {
+            string[] efectos = ["Paralizado", "Quemado", "Envenenado", "Gravemente envenenado", "Dormido", "Congelado"];
+            Entrenador[] entrenadores = { ash, pepe };
+            int opcion_entrenador = -1;
+            int opcion_pokemon = -1;
+            int opcion_efecto = -1;
+            int i,x;
+
+            do {
+                Console.WriteLine("Elegir a que entrenador queres aplicarle un efecto a uno de sus pokemones");
+                Console.WriteLine("1- Ash, 2- Pepe");
+                opcion_entrenador = Convert.ToInt32(Console.ReadLine());
+                if (opcion_entrenador > 0 && opcion_entrenador < 3) {
+                    do
+                    {
+                        Console.WriteLine("Elegir a que pokemon queres aplicarle un efecto");
+                        for (i = 1; i <= 6; i++)
+                        {
+                            Console.WriteLine(i + " " + entrenadores[opcion_entrenador - 1].equipo[i - 1].nombre);
+                        }
+                        opcion_pokemon = Convert.ToInt32(Console.ReadLine());
+                        if (opcion_pokemon > 0 && opcion_pokemon < 7)
+                        {
+                            do {
+                                Console.WriteLine("Elegir efecto");
+                                for (x = 1; x <= 5; x++)
+                                {
+                                    Console.WriteLine(x + " " + efectos[x-1]);
+                                }
+                                opcion_efecto = Convert.ToInt32(Console.ReadLine());
+                                if (opcion_efecto > 0 && opcion_efecto < 6) {
+                                    string estadoviejo = entrenadores[opcion_entrenador - 1].equipo[opcion_pokemon - 1].estado;
+                                    entrenadores[opcion_entrenador - 1].equipo[opcion_pokemon - 1].estado = efectos[opcion_efecto - 1];
+                                    entrenadores[opcion_entrenador - 1].equipo[opcion_pokemon - 1].mostrar_cambio_alteracion(estadoviejo);
+                                }
+                                else {
+                                    Console.WriteLine("Numero no posible, vuelva a");
+                                }
+                            } while (!(opcion_efecto > 0 && opcion_efecto < 6));
+                        }
+                        else
+                        {
+                            Console.WriteLine("Numero no posible, vuelva a");
+                        }
+
+                    } while (!(opcion_pokemon > 0 && opcion_pokemon < 7));
+                }
+                else {
+                    Console.WriteLine("Numero no posible, vuelva a");
+                }
+            } while (!(opcion_entrenador > 0 && opcion_entrenador < 3));
+
+        }
+        //--------------------------------------------------------------------------------------------------//
+
+        static void Main(string[] args)
+        {
 
             // creo una lista de pokemons
             Pokemon[] equipo1 = new Pokemon[]
             {
-                new Pokemon("Pikachu", 50, 150, 90, 55, 110, 50, 90, "Normal"),   
-                new Pokemon("Charizard", 55, 180, 84, 78, 109, 85, 100, "Normal"),  
-                new Pokemon("Blastoise", 52, 175, 83, 100, 85, 105, 78, "Normal"),  
-                new Pokemon("Venusaur", 51, 170, 82, 83, 100, 100, 80, "Normal"),  
-                new Pokemon("Snorlax", 48, 160, 110, 65, 55, 55, 45, "Normal"),  
-                new Pokemon("Gengar", 50, 130, 65, 60, 130, 110, 110, "Normal")  
+                new Pokemon("Pikachu", 50, 150, 90, 55, 110, 50, 90, "Normal"),
+                new Pokemon("Charizard", 55, 180, 84, 78, 109, 85, 100, "Normal"),
+                new Pokemon("Blastoise", 52, 175, 83, 100, 85, 105, 78, "Normal"),
+                new Pokemon("Venusaur", 51, 170, 82, 83, 100, 100, 80, "Normal"),
+                new Pokemon("Snorlax", 48, 160, 110, 65, 55, 55, 45, "Normal"),
+                new Pokemon("Gengar", 50, 130, 65, 60, 130, 110, 110, "Normal")
             };
 
             // creo otra lista de pokemons
             Pokemon[] equipo2 = new Pokemon[]
              {
-                new Pokemon("Dragonite", 52, 160, 134, 95, 70, 100, 80, "Normal"),   
-                new Pokemon("Alakazam", 50, 140, 50, 70, 135, 115, 120, "Normal"),  
-                new Pokemon("Gyarados", 49, 200, 130, 60, 95, 85, 65, "Normal"),      
-                new Pokemon("Rhydon", 53, 155, 110, 96, 83, 85, 45, "Normal"),    
-                new Pokemon("Jolteon", 50, 135, 110, 100, 50, 70, 130, "Normal"), 
-                new Pokemon("Starmie", 51, 145, 105, 75, 100, 90, 115, "Normal")   
+                new Pokemon("Dragonite", 52, 160, 134, 95, 70, 100, 80, "Normal"),
+                new Pokemon("Alakazam", 50, 140, 50, 70, 135, 115, 120, "Normal"),
+                new Pokemon("Gyarados", 49, 200, 130, 60, 95, 85, 65, "Normal"),
+                new Pokemon("Rhydon", 53, 155, 110, 96, 83, 85, 45, "Normal"),
+                new Pokemon("Jolteon", 50, 135, 110, 100, 50, 70, 130, "Normal"),
+                new Pokemon("Starmie", 51, 145, 105, 75, 100, 90, 115, "Normal")
              };
 
             string[] medallas = new string[8]
             {
-                "Medalla Roca",      
-                "Medalla Cascada",   
-                "Medalla Trueno",    
-                "Medalla Arcoíris",  
-                "Medalla Alma",      
-                "Medalla Pantano",   
-                "Medalla Volcán",    
-                "Medalla Tierra"    
+                "Medalla Roca",
+                "Medalla Cascada",
+                "Medalla Trueno",
+                "Medalla Arcoíris",
+                "Medalla Alma",
+                "Medalla Pantano",
+                "Medalla Volcán",
+                "Medalla Tierra"
             };
 
-            Entrenador entrenador1 = new Entrenador("Ash", 500, medallas,equipo1);
+            Entrenador entrenador1 = new Entrenador("Ash", 500, medallas, equipo1);
             Entrenador entrenador2 = new Entrenador("Pepe", 100, medallas, equipo2);
-            
 
-            // comparacion
-            if (entrenador1.damenivel() > entrenador2.damenivel()) {
-                Console.WriteLine(entrenador1.nombre + " Tiene mas nivel que: " + entrenador2.nombre);
-            }
-            else if (entrenador2.damenivel() > entrenador1.damenivel()) {
-                Console.WriteLine(entrenador2.nombre + " Tiene mas nivel que: " + entrenador1.nombre);
-            }
-            else {
-                Console.WriteLine("Tienen el mismo nivel");
+            comparar_nivel(entrenador1,entrenador2);
+
+            aplicar_efecto_alterado(entrenador1, entrenador2);
+
+            for (int i = 1; i <= 6; i++)
+            {
+                Console.WriteLine(entrenador1.equipo[i-1].nombre + " " + entrenador1.equipo[i - 1].estado);
+                
             }
 
-        }
+            for (int i = 1; i <= 6; i++)
+            {
+                Console.WriteLine(entrenador2.equipo[i-1].nombre + " " + entrenador2.equipo[i - 1].estado);
+                
+            }
+
+
         }
     }
-
+}
